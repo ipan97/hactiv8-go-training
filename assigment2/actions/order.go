@@ -2,11 +2,12 @@ package actions
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/ipan97/hactiv8-assigment2/models"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"strconv"
 )
 
 type OrderHandler struct {
@@ -71,6 +72,14 @@ func (c *OrderHandler) Delete(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, &models.ErrorResponse{
 			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		})
+	}
+	var order models.Order
+	err = c.db.Model(&models.Order{}).First(&order, "order_id=?", id).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return ctx.JSON(http.StatusBadRequest, &models.APIResponse{
+			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		})
 	}
