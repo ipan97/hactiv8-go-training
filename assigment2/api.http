@@ -1,0 +1,41 @@
+# Create Order
+POST localhost:8080/orders
+Content-Type: application/json
+
+{
+    "CustomerName": "Jerry",
+    "OrderedAt": "2019-11-09T04:21:46Z",
+    "Items": [
+        {
+            "ItemCode": "123",
+            "Description": "Iphone 10x",
+            "Quantity": 1
+        }
+    ]
+}
+
+###
+# Get Orders
+GET http://localhost:8080/orders
+Accept: application/json
+
+###
+# Update Order
+PUT /orders HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "OrderID": 1,
+  "CustomerName": "Ipan",
+  "OrderedAt": "2019-11-09T21:43:46Z",
+  "Items": [
+    {
+      "ItemID": 1,
+      "ItemCode": "123",
+      "Description": "Iphone 10x",
+      "Quantity": 1,
+      "OrderID": 1
+    }
+  ]
+}
