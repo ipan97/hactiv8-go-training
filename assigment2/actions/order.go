@@ -56,7 +56,7 @@ func (c *OrderHandler) Update(ctx echo.Context) error {
 
 func (c *OrderHandler) GetAll(ctx echo.Context) error {
 	var orders []models.Order
-	err := c.db.Model(&models.Order{}).Preload("Items").Find(&orders).Error
+	err := c.db.Model(&models.Order{}).Preload("Items").Order("orders.order_id asc").Find(&orders).Error
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, &models.ErrorResponse{
 			Code:    http.StatusInternalServerError,
