@@ -14,8 +14,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-type M map[string]interface{}
-
 const (
 	MessageNewUser = "New User"
 	MessageChat    = "Chat"
@@ -50,7 +48,7 @@ func broadcastMessage(currentConn *WebSocketConnection, kind, message string) {
 			Message: message,
 		})
 		if err != nil {
-			fmt.Printf("Error write json : %v", err)
+			log.Printf("Error write json : %v \n", err)
 		}
 	}
 }
@@ -63,7 +61,7 @@ func ejectConnection(currentConn *WebSocketConnection) {
 	}
 }
 
-func handleIO(currentConn *WebSocketConnection, connections []*WebSocketConnection) {
+func handleIO(currentConn *WebSocketConnection) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("ERROR", fmt.Sprintf("%v", r))
@@ -94,7 +92,7 @@ func main() {
 			http.Error(w, "Could not open requested file", http.StatusInternalServerError)
 			return
 		}
-		fmt.Fprintf(w, "%s", content)
+		_, _ = fmt.Fprintf(w, "%s", content)
 	})
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		currentConnection, err := upgrader.Upgrade(w, r, nil)
@@ -105,12 +103,12 @@ func main() {
 		wsConn := WebSocketConnection{Conn: currentConnection, Username: username}
 		connections = append(connections, &wsConn)
 
-		go handleIO(&wsConn, connections)
+		go handleIO(&wsConn)
 	})
 
 	// Start server
 	fmt.Println("Server starting at :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 }
